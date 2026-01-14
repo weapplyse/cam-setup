@@ -1,0 +1,17 @@
+# Logs
+*.log
+/tmp/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor
+*~
+*.swp
+.vscode/
+.idea/
+
+# Lock files
+*.lock

@@ -1,0 +1,30 @@
+[Unit]
+Description=Dual Camera Stream Service (camera-dual.sh)
+After=network.target nvargus-daemon.service
+Wants=nvargus-daemon.service
+
+[Service]
+Type=simple
+User=aspace
+Group=video
+WorkingDirectory=/home/aspace
+
+# Give camera hardware time to initialize
+ExecStartPre=/bin/sleep 3
+
+# Start the dual camera stream (focus is set automatically inside the script)
+ExecStart=/home/aspace/camera-dual.sh --mode 2
+
+Restart=always
+RestartSec=5
+StartLimitInterval=0
+StandardOutput=journal
+StandardError=journal
+
+# Environment
+Environment="PORT=5000"
+Environment="SENSOR_MODE=2"
+Environment="FOCUS=250"
+
+[Install]
+WantedBy=multi-user.target
