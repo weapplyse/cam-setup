@@ -102,7 +102,14 @@ done
 PORT="${PORT:-5000}"
 BIND_HOST="${BIND_HOST:-0.0.0.0}"
 
-# Sensor mode (can be set via --mode or SENSOR_MODE env var)
+# Load config file FIRST (so SENSOR_MODE from config is used if not set via CLI)
+CONFIG_FILE="${CONFIG_FILE:-/home/aspace/camera-config.sh}"
+if [[ -f "$CONFIG_FILE" ]]; then
+  # shellcheck disable=SC1090
+  source "$CONFIG_FILE"
+fi
+
+# Sensor mode priority: CLI arg > env var > config file > default (2)
 SENSOR_MODE="${SENSOR_MODE:-2}"
 
 # Validate sensor mode
@@ -112,21 +119,14 @@ if [[ ! "$SENSOR_MODE" =~ ^[0-3]$ ]]; then
   exit 1
 fi
 
-# Set resolution and FPS based on sensor mode
+# Set resolution and FPS based on sensor mode (ignore SRC_W/SRC_H/FPS from config)
 SRC_W="${MODE_WIDTH[$SENSOR_MODE]}"
 SRC_H="${MODE_HEIGHT[$SENSOR_MODE]}"
 FPS="${MODE_FPS[$SENSOR_MODE]}"
 
 # Output resolution per camera (combined will be 2x width)
-OUT_W="${OUT_W:-${MODE_OUT_W[$SENSOR_MODE]}}"
-OUT_H="${OUT_H:-${MODE_OUT_H[$SENSOR_MODE]}}"
-
-# Load config file if it exists (can override settings)
-CONFIG_FILE="${CONFIG_FILE:-/home/aspace/camera-config.sh}"
-if [[ -f "$CONFIG_FILE" ]]; then
-  # shellcheck disable=SC1090
-  source "$CONFIG_FILE"
-fi
+OUT_W="${MODE_OUT_W[$SENSOR_MODE]}"
+OUT_H="${MODE_OUT_H[$SENSOR_MODE]}"
 
 # Bitrate (auto-select based on mode if not specified)
 # Config uses bps, convert if needed
