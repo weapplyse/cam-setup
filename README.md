@@ -172,6 +172,8 @@ sudo rm -f /var/lock/camera-dual.lock
 
 ## Configuration File
 
+The camera scripts automatically load `/home/aspace/camera-config.sh` if it exists.
+
 Copy the example config and customize:
 
 ```bash
@@ -181,26 +183,44 @@ cp camera-config.sh.example ~/camera-config.sh
 Edit `~/camera-config.sh`:
 
 ```bash
-# Camera configuration
+# Camera configuration - all values are optional
+# Scripts use sensible defaults if not specified
+
+# Exposure range (nanoseconds)
 EXPOSURE_MIN=34000
 EXPOSURE_MAX=100000000
+
+# Gain range
 GAIN_MIN=1
 GAIN_MAX=12
+
+# Image processing
 CONTRAST=1.1
-EE_MODE=1
-EE_STRENGTH=0.8
-BITRATE=15000000
+EE_MODE=1           # Edge enhancement mode
+EE_STRENGTH=0.8     # Edge enhancement strength
+
+# Encoding
+BITRATE=15000000    # Bitrate in bps (will be converted to kbps)
+KEYINT=17           # Keyframe interval
+
+# Focus (0-1000)
 FOCUS=250
-FLIP_METHOD=0      # 0=none, 2=rotate 180
-SENSOR_MODE=1      # 0-3
-SRC_W=3840
-SRC_H=2160
-OUT_W=1920
-OUT_H=1080
-KEYINT=17
+
+# Video transform
+FLIP_METHOD=0       # 0=none, 2=rotate 180
+
+# Resolution (for camera.sh)
+SENSOR_MODE=1       # 0-3 (see sensor modes table)
+SRC_W=3840          # Source width
+SRC_H=2160          # Source height
+OUT_W=1920          # Output width (after downscale)
+OUT_H=1080          # Output height (after downscale)
 ```
 
-The scripts automatically load this file from `/home/aspace/camera-config.sh` if it exists.
+You can also specify a custom config file:
+```bash
+CONFIG_FILE=/path/to/my-config.sh ./camera.sh
+```
 
 ## Environment Variables
 

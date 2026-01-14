@@ -121,8 +121,20 @@ FPS="${MODE_FPS[$SENSOR_MODE]}"
 OUT_W="${OUT_W:-${MODE_OUT_W[$SENSOR_MODE]}}"
 OUT_H="${OUT_H:-${MODE_OUT_H[$SENSOR_MODE]}}"
 
+# Load config file if it exists (can override settings)
+CONFIG_FILE="${CONFIG_FILE:-/home/aspace/camera-config.sh}"
+if [[ -f "$CONFIG_FILE" ]]; then
+  # shellcheck disable=SC1090
+  source "$CONFIG_FILE"
+fi
+
 # Bitrate (auto-select based on mode if not specified)
-BITRATE_KBPS="${BITRATE_KBPS:-${MODE_BITRATE[$SENSOR_MODE]}}"
+# Config uses bps, convert if needed
+if [[ -n "${BITRATE:-}" ]]; then
+  BITRATE_KBPS=$((BITRATE / 1000))
+else
+  BITRATE_KBPS="${BITRATE_KBPS:-${MODE_BITRATE[$SENSOR_MODE]}}"
+fi
 KEYINT="${KEYINT:-$FPS}"
 
 # Monitoring / restart behaviour

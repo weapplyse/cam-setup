@@ -39,29 +39,37 @@ FPS="${FPS:-17}"
 OUT_W="${OUT_W:-2560}"
 OUT_H="${OUT_H:-1440}"
 
-# Read output resolution from config file if it exists
-if [[ -f /home/aspace/camera-config.sh ]]; then
-  # shellcheck disable=SC1091
-  source /home/aspace/camera-config.sh
-  # Override with config values if set
-  if [[ -n "${OUT_W:-}" ]] && is_uint "${OUT_W}"; then
-    OUT_W="${OUT_W}"
-  fi
-  if [[ -n "${OUT_H:-}" ]] && is_uint "${OUT_H}"; then
-    OUT_H="${OUT_H}"
-  fi
+# Load config file if it exists (overrides defaults above)
+CONFIG_FILE="${CONFIG_FILE:-/home/aspace/camera-config.sh}"
+if [[ -f "$CONFIG_FILE" ]]; then
+  # shellcheck disable=SC1090
+  source "$CONFIG_FILE"
 fi
 
-# x264enc expects kbps
-BITRATE_KBPS="${BITRATE_KBPS:-15000}"
+# x264enc expects kbps (config uses bps, convert if needed)
+if [[ -n "${BITRATE:-}" ]]; then
+  BITRATE_KBPS=$((BITRATE / 1000))
+else
+  BITRATE_KBPS="${BITRATE_KBPS:-15000}"
+fi
 KEYINT="${KEYINT:-17}"
 
-# Argus camera params (kept from your original)
+# Argus camera params
 EE_MODE="${EE_MODE:-1}"
 EE_STRENGTH="${EE_STRENGTH:-0.8}"
-EXPOSURE_RANGE="${EXPOSURE_RANGE:-34000 100000000}"
+# Build exposure range from min/max if set
+if [[ -n "${EXPOSURE_MIN:-}" && -n "${EXPOSURE_MAX:-}" ]]; then
+  EXPOSURE_RANGE="${EXPOSURE_MIN} ${EXPOSURE_MAX}"
+else
+  EXPOSURE_RANGE="${EXPOSURE_RANGE:-34000 100000000}"
+fi
 WBMODE="${WBMODE:-0}"
-GAIN_RANGE="${GAIN_RANGE:-1 12}"
+# Build gain range from min/max if set
+if [[ -n "${GAIN_MIN:-}" && -n "${GAIN_MAX:-}" ]]; then
+  GAIN_RANGE="${GAIN_MIN} ${GAIN_MAX}"
+else
+  GAIN_RANGE="${GAIN_RANGE:-1 12}"
+fi
 
 # Monitoring / restart behaviour
 CHECK_INTERVAL="${CHECK_INTERVAL:-30}"                # seconds
