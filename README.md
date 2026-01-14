@@ -9,6 +9,7 @@ Camera streaming and focus control scripts for IMX519 cameras on Jetson Orin Nan
 | `camera.sh` | Single camera streamer with self-healing |
 | `camera-dual.sh` | Dual camera side-by-side streamer |
 | `set-camera-focus.py` | Focus control for single or dual cameras |
+| `set-camera-clocks.sh` | Set camera clocks to max for best performance |
 | `camera-dual.service` | Systemd service for dual camera streaming |
 | `camera-config.sh.example` | Example configuration file |
 
@@ -123,6 +124,16 @@ gst-launch-1.0 tcpclientsrc host=<jetson-ip> port=5000 \
 |--------|----------|---------|------------------|
 | CAM0 | Port 1 | 10 | 0x0C |
 | CAM1 | Port 2 | 9 | 0x0C |
+
+## Performance Optimization
+
+Set camera clocks to maximum for best performance:
+
+```bash
+sudo ./set-camera-clocks.sh
+```
+
+This sets VI, ISP, NVCSI, and EMC clocks to their maximum rates. Run this before starting the camera stream for optimal performance, especially at higher resolutions.
 
 ## Troubleshooting
 
