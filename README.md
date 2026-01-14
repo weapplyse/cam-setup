@@ -6,14 +6,41 @@ Camera streaming and focus control scripts for IMX519 cameras on Jetson Orin Nan
 
 | File | Description |
 |------|-------------|
+| `install.sh` | Automated installer (--dual or --single) |
 | `camera.sh` | Single camera streamer with self-healing |
 | `camera-dual.sh` | Dual camera side-by-side streamer |
 | `set-camera-focus.py` | Focus control for single or dual cameras |
-| `set-camera-clocks.sh` | Set camera clocks to max for best performance |
-| `camera-dual.service` | Systemd service for dual camera streaming |
+| `set-camera-clocks.sh` | Set camera clocks to max (now built into scripts) |
 | `camera-config.sh.example` | Example configuration file |
 
-## Quick Start
+## Installation
+
+### Quick Install
+
+```bash
+git clone https://github.com/weapplyse/cam-setup.git
+cd cam-setup
+
+# Install dual camera setup (default)
+sudo ./install.sh --dual
+
+# Or install single camera setup
+sudo ./install.sh --single
+
+# Check installation status
+sudo ./install.sh --check
+
+# Uninstall
+sudo ./install.sh --uninstall
+```
+
+The installer will:
+1. Copy scripts to `/home/aspace/`
+2. Create config file if not exists
+3. Install and enable systemd service
+4. Start the camera stream
+
+## Manual Usage
 
 ### Single Camera
 
