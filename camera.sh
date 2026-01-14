@@ -141,6 +141,23 @@ restart_nvargus() {
   fi
 }
 
+set_camera_clocks() {
+  if have_sudo; then
+    log "Setting camera clocks to max..."
+    sudo -n sh -c 'echo 1 > /sys/kernel/debug/bpmp/debug/clk/vi/mrq_rate_locked' 2>/dev/null || true
+    sudo -n sh -c 'echo 1 > /sys/kernel/debug/bpmp/debug/clk/isp/mrq_rate_locked' 2>/dev/null || true
+    sudo -n sh -c 'echo 1 > /sys/kernel/debug/bpmp/debug/clk/nvcsi/mrq_rate_locked' 2>/dev/null || true
+    sudo -n sh -c 'echo 1 > /sys/kernel/debug/bpmp/debug/clk/emc/mrq_rate_locked' 2>/dev/null || true
+    sudo -n sh -c 'cat /sys/kernel/debug/bpmp/debug/clk/vi/max_rate > /sys/kernel/debug/bpmp/debug/clk/vi/rate' 2>/dev/null || true
+    sudo -n sh -c 'cat /sys/kernel/debug/bpmp/debug/clk/isp/max_rate > /sys/kernel/debug/bpmp/debug/clk/isp/rate' 2>/dev/null || true
+    sudo -n sh -c 'cat /sys/kernel/debug/bpmp/debug/clk/nvcsi/max_rate > /sys/kernel/debug/bpmp/debug/clk/nvcsi/rate' 2>/dev/null || true
+    sudo -n sh -c 'cat /sys/kernel/debug/bpmp/debug/clk/emc/max_rate > /sys/kernel/debug/bpmp/debug/clk/emc/rate' 2>/dev/null || true
+    log "Camera clocks set to max"
+  else
+    log "WARNING: sudo not available; cannot set camera clocks"
+  fi
+}
+
 release_port() {
   # Kill anything still listening on PORT. Prefer ss+pid, fall back to lsof.
   if have_sudo; then
@@ -340,6 +357,7 @@ set_focus() {
 # -----------------------------
 # Main loop
 # -----------------------------
+set_camera_clocks
 restart_nvargus
 
 STRIKES=0
