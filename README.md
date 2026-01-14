@@ -10,6 +10,7 @@ Camera streaming and focus control scripts for IMX519 cameras on Jetson Orin Nan
 | `camera-dual.sh` | Dual camera side-by-side streamer |
 | `set-camera-focus.py` | Focus control for single or dual cameras |
 | `camera-dual.service` | Systemd service for dual camera streaming |
+| `camera-config.sh.example` | Example configuration file |
 
 ## Quick Start
 
@@ -157,6 +158,38 @@ sudo journalctl -u camera-dual.service -f
 ls -la /var/lock/camera-dual.lock
 sudo rm -f /var/lock/camera-dual.lock
 ```
+
+## Configuration File
+
+Copy the example config and customize:
+
+```bash
+cp camera-config.sh.example ~/camera-config.sh
+```
+
+Edit `~/camera-config.sh`:
+
+```bash
+# Camera configuration
+EXPOSURE_MIN=34000
+EXPOSURE_MAX=100000000
+GAIN_MIN=1
+GAIN_MAX=12
+CONTRAST=1.1
+EE_MODE=1
+EE_STRENGTH=0.8
+BITRATE=15000000
+FOCUS=250
+FLIP_METHOD=0      # 0=none, 2=rotate 180
+SENSOR_MODE=1      # 0-3
+SRC_W=3840
+SRC_H=2160
+OUT_W=1920
+OUT_H=1080
+KEYINT=17
+```
+
+The scripts automatically load this file from `/home/aspace/camera-config.sh` if it exists.
 
 ## Environment Variables
 
